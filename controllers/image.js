@@ -224,7 +224,6 @@ exports.getAvailableReactions = function(req, res) {
   fs.readFile('reactions.json', 'utf8', function (err, data) {
     if (err) next(err);
     available_reactions = JSON.parse(data);
-    console.log(available_reactions.length);
     // Make distribution heavier in the short end by min(X,Y), X,Y uncorrelated random variables.
     var reactions = available_reactions[Math.floor(Math.min(Math.random(), Math.random()) * available_reactions.length)];
     res.json(reactions);      
