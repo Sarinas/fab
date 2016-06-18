@@ -343,6 +343,7 @@ exports.invite = function(req, res, next) {
   var user_id = req.user._id;
   var message = req.body.message;
   var email = req.body.email;
+  bump_ranking(user_id, 5);
   var auth = {
         auth: {
           api_key: process.env.MAILGUN_KEY,
@@ -364,4 +365,10 @@ exports.invite = function(req, res, next) {
           res.json("Invite email sent");
         });
       });
+}
+function bump_ranking(userId, amount) {
+  User.findByIdAndUpdate(userId, {
+    $inc: {"ranking": amount}
+  }, function(err, user) {
+  });
 }
