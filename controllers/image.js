@@ -69,7 +69,8 @@ exports.register = function(req, res, next) {
       if(err) return next(err);
       planet.followers.forEach(function(follower){
         if (follower != req.user._id) {   // don't add to current users own queue
-          client.lpush(follower+"_planet_unseen", JSON.stringify([req.body.cloudinary_id, req.body.filter]), function(err, reply) {
+          client.lpush(follower+"_planet_unseen", JSON.stringify([req.body.cloudinary_id, req.body.filter]), function(err, size) {
+            if (size > 6) {client.rpop(follower+"_planet_unseen");}
             if (err) console.log(err); // silently fail and log here
           });          
         }
@@ -79,7 +80,8 @@ exports.register = function(req, res, next) {
   // send out to users!
   users.forEach(function(user) {
     User.findOne({_id: user}, function(err, user) {
-      client.lpush(user._id+"_unseen", JSON.stringify([req.body.cloudinary_id, req.body.filter]), function(err, reply) {
+      client.lpush(user._id+"_unseen", JSON.stringify([req.body.cloudinary_id, req.body.filter]), function(err, size) {
+        if (size > 10) {client.rpop(user._id+"_unseen");}
         if (err) console.log(err); // silently fail and log here
       });
       // If user has gcm_key they accept push notifications. Add to queue and let worker process do the rest
