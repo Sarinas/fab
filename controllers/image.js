@@ -58,11 +58,18 @@ exports.register = function(req, res, next) {
   // create message for push notification
   var message = new gcm.Message();
   var registrationIds = [];
-  message.addData('message',"you have a few fab!");
-  message.addData('title','OMG new fab!' );
-  message.addData('msgcnt','3');
-  message.timeToLive = 3000;
-
+  var message = new gcm.Message({
+      collapseKey: 'demo',
+      priority: 'high',
+      contentAvailable: true,
+      delayWhileIdle: true,
+      timeToLive: 3,
+      notification: {
+          title: "OMG new fab!",
+          icon: "ic_launcher",
+          body: "you have a few fab!"
+      }
+  });
   // send out to the planets!
   planets.forEach(function(planet_id){
     Planet.findOne({_id: planet_id}, function(err, planet) {
