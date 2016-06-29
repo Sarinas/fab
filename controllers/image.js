@@ -56,7 +56,6 @@ exports.register = function(req, res, next) {
     link: req.body.link
   });
   // create message for push notification
-  var message = new gcm.Message();
   var registrationIds = [];
   var message = new gcm.Message({
       collapseKey: 'demo',
@@ -154,13 +153,19 @@ exports.react_v2 = function(req, res, next) {
     var reaction_profile_picture = req.body.profile_picture;
     var filter = image.filter;
     // push notification
-    var message = new gcm.Message();
     var registrationIds = [];
-    message.addData('message', reaction_username+" says "+reaction_message);
-    message.addData('title', "new reaction!");
-    message.addData('msgcnt','3');
-    message.addData('soundname','beep.wav'); 
-    message.timeToLive = 3000;
+    var message = new gcm.Message({
+      collapseKey: 'demo',
+      priority: 'high',
+      contentAvailable: true,
+      delayWhileIdle: true,
+      timeToLive: 3,
+      notification: {
+          title: "new reaction!",
+          icon: "ic_launcher",
+          body: reaction_username+" says "+reaction_message
+      }
+    });
     User.findOne({_id: image_owner}, function(err, user) {
       if (user.gcm_key) {
         registrationIds.push(user.gcm_key);
