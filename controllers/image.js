@@ -65,9 +65,9 @@ exports.register = function(req, res, next) {
       delayWhileIdle: true,
       timeToLive: 3,
       notification: {
-          title: "OMG new fab!",
+          title: "new fab!",
           icon: "ic_launcher",
-          body: "you have a new fab!"
+          body: "OMG new fab!"
       }
   });
   // send out to the planets!
