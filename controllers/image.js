@@ -67,7 +67,7 @@ exports.register = function(req, res, next) {
       notification: {
           title: "OMG new fab!",
           icon: "ic_launcher",
-          body: "you have a few fab!"
+          body: "you have a new fab!"
       }
   });
   // send out to the planets!
