@@ -54,6 +54,8 @@ router.route('/user/following/')
     .get(authController.isAuthenticated, userController.getFollowing);  
 router.route('/user/followers/')
     .get(authController.isAuthenticated, userController.getFollowers);  
+router.route('/user/planets/')
+    .get(authController.isAuthenticated, userController.getPlanets);  
 router.route('/other_user/followers/:id')
     .get(authController.isAuthenticated, userController.getOtherFollowers);  
 router.route('/other_user/following/:id')
