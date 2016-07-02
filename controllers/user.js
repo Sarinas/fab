@@ -221,6 +221,7 @@ exports.unblock = function(req, res, next) {
       }
     );
 }
+// below to be deprecated in favour of all data sent at getMe()
 exports.getFollowing = function(req, res, next) {
   var user_id = req.user._id;
   User.find({friends: user_id}, function(err, following) {
@@ -245,7 +246,14 @@ exports.getOtherFollowing = function(req, res, next) {
     res.json(following);
   })
 }
-// below to be deprecated in favour of all data sent at getMe()
+exports.getOtherPlanets = function(req, res, next) {
+  var user_id = req.params.id;
+  Planet.find({followers: user_id })
+  .exec(function (err, planets) {
+    if (err) next(err);
+    res.json(planets)
+  });
+}
 exports.getOtherFollowers = function(req, res, next) {
   var userId = req.params.id;
   User.findOne({ _id: userId })

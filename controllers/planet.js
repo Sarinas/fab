@@ -61,6 +61,15 @@ exports.stopFollowing = function(req, res, next) {
     res.json({"message": "Stopped following OK!"});
   });
 }
+exports.getFollowers = function(req, res, next) {
+  var planet_id = req.params.id;
+  Planet.findOne({ _id: planet_id })
+  .populate('followers')
+  .exec(function (err, planet) {
+    if (err) next(err);
+    res.json(planet);
+  });
+}
 exports.getPlanets = function(req, res, next) {
   Planet.find(function(err, planets) {
     if(err) return next(err);

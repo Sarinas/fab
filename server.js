@@ -58,6 +58,8 @@ router.route('/other_user/followers/:id')
     .get(authController.isAuthenticated, userController.getOtherFollowers);  
 router.route('/other_user/following/:id')
     .get(authController.isAuthenticated, userController.getOtherFollowing);  
+router.route('/other_user/planets/:id')
+    .get(authController.isAuthenticated, userController.getOtherPlanets);
 router.route('/user/me')
     .get(authController.isAuthenticated, userController.getMe);
 router.route('/user/unseen_images')
@@ -131,6 +133,8 @@ router.route('/planet/stop_following/:id')
     .delete(authController.isAuthenticated, planetController.stopFollowing);
 router.route('/planet/:id')
     .get(authController.isAuthenticated, planetController.getById);
+router.route('/planet/followers/:id')
+    .get(authController.isAuthenticated, planetController.getFollowers);
 router.route('/planets/')
     .get(authController.isAuthenticated, planetController.getPlanets);
 router.route('/invite/')
