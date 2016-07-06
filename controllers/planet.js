@@ -22,7 +22,26 @@ exports.createNewPlanet = function(req, res, next) {
     res.json({ message: 'New planet added' });
   });
 };
-
+exports.updateProfileImage = function(req, res, next) {
+  var planet_id = req.body.planet;
+  var cloudinary_id = req.body.cloudinary_id;
+  Planet.findByIdAndUpdate(planet_id, {
+    $set: {"image": cloudinary_id}
+  }, function(err, user) {
+    if(err) return next(err);
+    res.json({"message": "Planet profile picture updated!"});
+  });
+}
+exports.updateDescription = function(req, res, next) {
+  var planet_id = req.body.planet;
+  var bio_text = req.body.bio;
+  Planet.findByIdAndUpdate(planet_id, {
+    $set: {"description": bio_text}
+  }, function(err, user) {
+    if(err) return next(err);
+    res.json({"message": "Planet bio updated!"});
+  });
+}
 exports.getById = function(req, res, next) {
   var planet_id = req.params.id;
   Planet.findOne({_id: planet_id}, function(err, planet) {

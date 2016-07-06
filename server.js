@@ -55,7 +55,9 @@ router.route('/user/following/')
 router.route('/user/followers/')
     .get(authController.isAuthenticated, userController.getFollowers);  
 router.route('/user/planets/')
-    .get(authController.isAuthenticated, userController.getPlanets);  
+    .get(authController.isAuthenticated, userController.getPlanets);
+router.route('/other_user/planets/:id')
+    .get(authController.isAuthenticated, userController.getOtherPlanets);  
 router.route('/other_user/followers/:id')
     .get(authController.isAuthenticated, userController.getOtherFollowers);  
 router.route('/other_user/following/:id')
@@ -115,14 +117,13 @@ router.route('/v2/image/react')
 router.route('/image/reactions/:id')
     .get(authController.isAuthenticated, imageController.getReactions);
 router.route('/v2/image/reactions/:id')
-    .get(authController.isAuthenticated, imageController.getNewReactions);
-    // about to be deprecated, is out of current version
+    .get(authController.isAuthenticated, imageController.getReactions_v2);
 router.route('/image/:id')
     .delete(authController.isAuthenticated, imageController.delete);
 router.route('/image/report/')
     .post(authController.isAuthenticated, imageController.report);
-router.route('/images')
-    .get(authController.isAuthenticated, imageController.getAll);
+router.route('/v2/reactions/:id')
+    .get(imageController.getAvailableReactions_v2);
 router.route('/reactions')
     .get(imageController.getAvailableReactions);
 router.route('/planet/latest/:id')
@@ -135,6 +136,10 @@ router.route('/planet/stop_following/:id')
     .delete(authController.isAuthenticated, planetController.stopFollowing);
 router.route('/planet/:id')
     .get(authController.isAuthenticated, planetController.getById);
+router.route('/planet/image')
+    .put(authController.isAuthenticated, planetController.updateProfileImage);
+router.route('/planet/bio')
+    .put(authController.isAuthenticated, planetController.updateDescription);
 router.route('/planet/followers/:id')
     .get(authController.isAuthenticated, planetController.getFollowers);
 router.route('/planets/')

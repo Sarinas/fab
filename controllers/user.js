@@ -279,6 +279,14 @@ exports.getPlanets = function(req, res, next) {
     res.json(planets)
   });
 }
+exports.getOtherPlanets = function(req, res, next) {
+  var user_id = req.params.id;
+  Planet.find({followers: user_id })
+  .exec(function (err, planets) {
+    if (err) next(err);
+    res.json(planets)
+  });
+}
 // TODO remove later... 
 exports.getUsers = function(req, res, next) {
   User.find(function(err, users) {

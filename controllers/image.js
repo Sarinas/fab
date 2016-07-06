@@ -228,11 +228,21 @@ exports.getReactions = function(req, res) {
   });
 }
 // New version of reactions
-exports.getNewReactions = function(req, res) {
+exports.getReactions_v2 = function(req, res) {
   var image_id = req.params.id;
   client.lrange(image_id+"_image_reactions", 0, -1, function(err, reply) {
     res.json(reply);
   });
+}
+exports.getAvailableReactions_v2 = function(req, res) {
+  var image_id = req.params.id;
+  fs.readFile('reactions.json', 'utf8', function (err, data) {
+    if (err) next(err);
+    available_reactions = JSON.parse(data);
+    // Make distribution heavier in the short end by min(X,Y), X,Y uncorrelated random variables.
+    var reactions = available_reactions[Math.floor(Math.min(Math.random(), Math.random()) * available_reactions.length)];
+    res.json(reactions);      
+  })
 }
 exports.getAvailableReactions = function(req, res) {
   fs.readFile('reactions.json', 'utf8', function (err, data) {
