@@ -10,11 +10,17 @@ var Planet = require('../models/planet');
 var ObjectId = require('mongoose').Types.ObjectId;
 var gcm = require('node-gcm');
 var sender = new gcm.Sender(process.env.GCM_API_KEY);
+var clarifai = require('clarifai');
 
 cloudinary.config({ 
     cloud_name: cloudinary_vars.hostname, 
     api_key: cloudinary_vars.auth.split(':')[0], 
     api_secret: cloudinary_vars.auth.split(':')[1]
+});
+
+Clarifai.initialize({
+  'clientId': process.env.CLARIFAI_CLIENT_ID,
+  'clientSecret': process.env.CLARIFAI_CLIENT_SECRET
 });
 
 if (process.env.REDISTOGO_URL) {
@@ -50,11 +56,27 @@ exports.register = function(req, res, next) {
     cloudinary_id: req.body.cloudinary_id,
     by: req.user._id,
     reactions: [],
+    tags: [],
     hashtag: req.body.hashtag,
     hashtag_height: req.body.hashtag_height,
     filter: req.body.filter,
-    link: req.body.link
+    link: req.body.links
   });
+  
+  Clarifai.getTagsByUrl(
+  cloudinary.url(req.body.cloudinary_id),
+    {
+      'selectClasses': ['people', 'dress', 'wedding']
+    },
+    function(err, tags) {
+      console.log(tags.results[0].result);
+      image.tags = tags.results[0].result.tag.probs;
+      image.save(function(err) {
+        if (err) next(err);
+        res.json({ message: 'Image registered OK' });
+      });
+    }
+  );
   // create message for push notification
   var registrationIds = [];
   var message = new gcm.Message({
@@ -105,11 +127,6 @@ exports.register = function(req, res, next) {
   // add to users' own latest images
   client.lpush(req.user._id+"_latest", JSON.stringify([req.body.cloudinary_id, req.body.filter]), function(err, size) {
     if (size > 10) {client.rpop(req.user_id+"_latest");}
-  });
-
-  image.save(function(err) {
-    if (err) next(err);
-    res.json({ message: 'Image registered OK' });
   });
 };
 exports.getUnseenReactionsNumber = function(req, res, next) {
@@ -236,6 +253,9 @@ exports.getReactions_v2 = function(req, res) {
 }
 exports.getAvailableReactions_v2 = function(req, res) {
   var image_id = req.params.id;
+  Image.findOne({cloudinary_id: image_id}, function(err, image) {
+    console.log(image.tags);
+  });
   fs.readFile('reactions.json', 'utf8', function (err, data) {
     if (err) next(err);
     available_reactions = JSON.parse(data);
@@ -245,6 +265,7 @@ exports.getAvailableReactions_v2 = function(req, res) {
   })
 }
 exports.getAvailableReactions = function(req, res) {
+
   fs.readFile('reactions.json', 'utf8', function (err, data) {
     if (err) next(err);
     available_reactions = JSON.parse(data);

@@ -7,6 +7,7 @@ var ImageSchema = new mongoose.Schema({
       user: { type: Schema.Types.ObjectId, ref: 'User' },
       reaction: String
     }],
+    tags: [String],
     by: { type: Schema.Types.ObjectId, ref: 'User' },
     users: [{type: Schema.Types.ObjectId, ref: 'User'}],
     planet: {type: Schema.Types.ObjectId, ref: 'Planet'},
