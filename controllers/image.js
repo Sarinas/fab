@@ -120,6 +120,7 @@ exports.register = function(req, res, next) {
       if (user.gcm_key) {
         registrationIds.push(user.gcm_key);
       }
+      console.log(registrationIds);
       users_sent_to++;
       if (users_sent_to == users.length) {
         sender.send(message, registrationIds, 4, function (err, result) {
