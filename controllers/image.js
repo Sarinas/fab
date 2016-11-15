@@ -62,8 +62,12 @@ exports.register = function(req, res, next) {
     filter: req.body.filter,
     link: req.body.links
   });
+  image.save(function(err) {
+    if (err) next(err);
+    res.json({ message: 'Image registered OK' });
+  });
   
-  Clarifai.getTagsByUrl(
+  /*Clarifai.getTagsByUrl(
   cloudinary.url(req.body.cloudinary_id),
     {
       'selectClasses': ['people', 'dress', 'wedding']
@@ -76,7 +80,7 @@ exports.register = function(req, res, next) {
         res.json({ message: 'Image registered OK' });
       });
     }
-  );
+  );*/
   // create message for push notification
   var registrationIds = [];
   var message = new gcm.Message({
@@ -164,6 +168,7 @@ exports.react_v2 = function(req, res, next) {
   bump_ranking(user_id, 1);
   
   Image.findOne({cloudinary_id: image_id}, function(err, image) {
+    if (err) next(err);
     var image_owner = image.by;
     var reaction_message = req.body.reaction_message;
     var reaction_username = req.body.username;
@@ -253,9 +258,9 @@ exports.getReactions_v2 = function(req, res) {
 }
 exports.getAvailableReactions_v2 = function(req, res) {
   var image_id = req.params.id;
-  Image.findOne({cloudinary_id: image_id}, function(err, image) {
-    console.log(image.tags);
-  });
+  /*Image.findOne({cloudinary_id: image_id}, function(err, image) {
+
+  });*/
   fs.readFile('reactions.json', 'utf8', function (err, data) {
     if (err) next(err);
     available_reactions = JSON.parse(data);

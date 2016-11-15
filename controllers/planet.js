@@ -66,7 +66,7 @@ exports.startFollowing = function(req, res, next) {
     {safe: false, upsert: true},
     function(err, model) {
       if(err) return next(err);
-      res.json({message: 'Added planet'});
+      res.json({message: "Started following OK!"});
     }
   );
 };

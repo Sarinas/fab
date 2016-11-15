@@ -294,6 +294,15 @@ exports.getUsers = function(req, res, next) {
     res.json(users);      
   });
 };
+exports.getTopUsers = function(req, res, next) {
+  User.find({})
+  .sort({ranking: -1})
+  .limit(30)
+  .exec(function(err, users) {
+    if(err) return next(err);
+    res.json(users);   
+  });
+};
 exports.updateBio = function(req, res, next) {
   var userId = req.user._id;
   var bio_text = req.body.bio;

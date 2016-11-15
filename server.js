@@ -44,6 +44,8 @@ router.route('/user/checkname/:username')
     .get(userController.checkUsernameAvailable);
 router.route('/users')
     .get(authController.isAuthenticated, userController.getUsers);
+router.route('/users/top')
+    .get(authController.isAuthenticated, userController.getTopUsers);
 router.route('/image/reactions_list')
     .get(authController.isAuthenticated, imageController.getReactionList);
 router.route('/user/reactions_list')
