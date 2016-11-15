@@ -122,7 +122,8 @@ exports.register = function(req, res, next) {
       }
       users_sent_to++;
       if (users_sent_to == users.length) {
-        sender.send(message, registrationIds, 4, function (result) {
+        sender.send(message, registrationIds, 4, function (err, result) {
+          if (err) console.log(err);
           console.log(result);
         });
       }
