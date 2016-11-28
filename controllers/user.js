@@ -23,6 +23,7 @@ exports.createNewUser = function(req, res, next) {
     gender: req.body.gender,
     ranking: 0,
     postal_no: req.body.postal_no,
+    dob: req.body.dob,
     profile_picture: req.body.profile_picture,
     email: req.body.email
   });

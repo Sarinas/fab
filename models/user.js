@@ -27,6 +27,7 @@ var UserSchema = new mongoose.Schema({
       unique: true  
     },
     ranking: Number,
+    dob: String,
     gcm_key: String,
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     resetPasswordToken: String,
