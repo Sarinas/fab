@@ -62,25 +62,31 @@ exports.register = function(req, res, next) {
     filter: req.body.filter,
     link: req.body.links
   });
-  image.save(function(err) {
+  /*image.save(function(err) {
     if (err) next(err);
     res.json({ message: 'Image registered OK' });
-  });
+  });*/
   
-  /*Clarifai.getTagsByUrl(
+  Clarifai.getTagsByUrl(
   cloudinary.url(req.body.cloudinary_id),
     {
-      'selectClasses': ['people', 'dress', 'wedding']
+      'selectClasses': ['face', 'outdoors', 'party', 'work', 'fashion', 'food', 'cute']
     },
     function(err, tags) {
-      console.log(tags.results[0].result);
-      image.tags = tags.results[0].result.tag.probs;
+      if (err) next(err);
+      var probs = tags.results[0].result.tag.probs;
+      var tags = tags.results[0].result.tag.classes;
+      var best_tag = {prob: 0, tag: ''};
+      for (i = 0; i < tags.length; i++) {
+        if (probs[i] > best_tag.prob) best_tag = {tag: tags[i], prob: probs[i]};
+      }
+      image.tags = [best_tag.tag];
       image.save(function(err) {
         if (err) next(err);
         res.json({ message: 'Image registered OK' });
       });
     }
-  );*/
+  );
   // create message for push notification
   var registrationIds = [];
   var message = new gcm.Message({
@@ -124,7 +130,6 @@ exports.register = function(req, res, next) {
       if (users_sent_to == users.length) {
         sender.send(message, registrationIds, 4, function (err, result) {
           if (err) console.log(err);
-          console.log(result);
         });
       }
     });
@@ -193,7 +198,6 @@ exports.react_v2 = function(req, res, next) {
       if (user.gcm_key) {
         registrationIds.push(user.gcm_key);
         sender.send(message, registrationIds, 4, function (result) {
-          console.log(result);
         });
       }
     });
@@ -259,16 +263,17 @@ exports.getReactions_v2 = function(req, res) {
 }
 exports.getAvailableReactions_v2 = function(req, res) {
   var image_id = req.params.id;
-  /*Image.findOne({cloudinary_id: image_id}, function(err, image) {
-
-  });*/
-  fs.readFile('reactions.json', 'utf8', function (err, data) {
-    if (err) next(err);
-    available_reactions = JSON.parse(data);
-    // Make distribution heavier in the short end by min(X,Y), X,Y uncorrelated random variables.
-    var reactions = available_reactions[Math.floor(Math.min(Math.random(), Math.random()) * available_reactions.length)];
-    res.json(reactions);      
-  })
+  var available_reactions = [];
+  Image.findOne({cloudinary_id: image_id}, function(err, image) {
+    var tag = image.tags[0] || '';
+    fs.readFile('reactions/reactions_'+tag+'.json', 'utf8', function (err, data) {
+      if (err) next(err);
+      available_reactions = JSON.parse(data);
+      // Make distribution heavier in the short end by min(X,Y), X,Y uncorrelated random variables.
+      var reactions = available_reactions[Math.floor(Math.min(Math.random(), Math.random()) * available_reactions.length)];
+      res.json(reactions);      
+    })
+  });
 }
 exports.getAvailableReactions = function(req, res) {
 
